@@ -96,7 +96,7 @@ resource "aws_launch_configuration" "learn-tf-launch_configuration" {
     name_prefix = "learn-tf-launch_configuration-"
     image_id = data.aws_ami.amazon-linux.id
     instance_type = "t2.micro"
-    security_groups = []
+    security_groups = [aws_security_group.learn-tf-instance-sg.id]
 
     lifecycle {
         # Necessary if changing 'name' or 'name_prefix' properties.
@@ -144,7 +144,7 @@ resource "aws_autoscaling_group" "learn-tf-asg" {
     vpc_zone_identifier = module.vpc.public_subnets
 
     tag {
-        key                 = "name"         # Reqwuired
+        key                 = "name"         # Required
         value               = "learn-tf-asg" # Required
         # Enables propagation of the tag to Amazon EC2 instances launched via this ASG
         propagate_at_launch = true 

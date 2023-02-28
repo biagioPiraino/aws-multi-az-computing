@@ -1,4 +1,4 @@
-# aws-multi-az-computing
+# AWS Multi-AZ Computing
 
 Deploy auto scaled, distributed and multi-AZ computing power on AWS using Terraform :cloud:
 

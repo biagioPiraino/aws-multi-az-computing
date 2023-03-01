@@ -3,8 +3,12 @@ resource "aws_instance" "ec2-instances" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
   ami = "ami-065793e81b1869261" # Defined specific ami id from aws management console
   instance_type = "t2.micro"
-  security_groups = [ aws_security_group.allow-all-tcp-traffic.name ]
-  vpc_security_group_ids = [ aws_security_group.allow-all-tcp-traffic.id ]
+  security_groups = [ 
+    aws_security_group.allow-http-traffic-from-alb.name,
+    aws_security_group.allow-ssh-traffic.name ]
+  vpc_security_group_ids = [ 
+    aws_security_group.allow-http-traffic-from-alb.id,
+    aws_security_group.allow-ssh-traffic.id ]
   associate_public_ip_address = true
   user_data = <<EOF
   #!/bin/bash
@@ -18,11 +22,11 @@ resource "aws_instance" "ec2-instances" {
   EOF
 }
 
-resource "aws_security_group" "allow-all-tcp-traffic" {
-  name = "allow-all-tcp-traffic"
+resource "aws_security_group" "allow-all-http-traffic" {
+  name = "allow-all-http-traffic"
   ingress = [ {
     cidr_blocks = [ "0.0.0.0/0" ]
-    description = "Allow all TCP traffic at port 80"
+    description = "Allow all HTTP traffic at port 80"
     from_port = 80
     to_port = 80
     protocol = "tcp"
@@ -45,8 +49,59 @@ resource "aws_security_group" "allow-all-tcp-traffic" {
   } ]
 }
 
+resource "aws_security_group" "allow-http-traffic-from-alb" {
+  name = "allow-http-traffic-from-alb"
+  ingress = [ {
+    cidr_blocks = []
+    description = "Allow HTTP traffic from ALB"
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    ipv6_cidr_blocks = []
+    prefix_list_ids = []
+    security_groups = [aws_security_group.allow-all-http-traffic.id]
+    self = false
+  } ]
 
+  egress = [ {
+    cidr_blocks = [ "0.0.0.0/0" ]
+    description = "Allow all outbound traffic"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    ipv6_cidr_blocks = []
+    prefix_list_ids = []
+    security_groups = []
+    self = false
+  } ]
+}
 
+resource "aws_security_group" "allow-ssh-traffic" {
+  name = "allow-ssh-traffic-from-alb"
+  ingress = [ {
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow SSH traffic at port 22"
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    ipv6_cidr_blocks = []
+    prefix_list_ids = []
+    security_groups = []
+    self = false
+  } ]
+
+  egress = [ {
+    cidr_blocks = [ "0.0.0.0/0" ]
+    description = "Allow all outbound traffic"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    ipv6_cidr_blocks = []
+    prefix_list_ids = []
+    security_groups = []
+    self = false
+  } ]
+}
 
 
 #############################################################################

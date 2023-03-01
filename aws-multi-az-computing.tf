@@ -1,24 +1,3 @@
-# Initialize terraform
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-    }
-  }
-}
-
-# Configure the AWS Provider
-provider "aws" {
-  region     = "eu-west-1"
-  access_key = "" # Insert an access key
-  secret_key = "" # Insert a secret key
-}
-
-# Used for defining the Region's AZ
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
 # So let's try to break up this process
 # You do have 2 main components which are an ALB and an ASG
 

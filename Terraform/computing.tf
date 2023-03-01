@@ -55,6 +55,7 @@ resource "aws_lb_listener" "learn-tf-lb-listener" {
   }
 }
 
+# Create a security group that allow all HTTP traffic (this will be attached to the ALB)
 resource "aws_security_group" "allow-all-http-traffic" {
   name = "allow-all-http-traffic"
   ingress = [ {
@@ -82,6 +83,8 @@ resource "aws_security_group" "allow-all-http-traffic" {
   } ]
 }
 
+# Create a security group that allow HTTP traffic from the ALB only 
+# (this will be attached to the instances)
 resource "aws_security_group" "allow-http-traffic-from-alb" {
   name = "allow-http-traffic-from-alb"
   ingress = [ {
@@ -109,6 +112,8 @@ resource "aws_security_group" "allow-http-traffic-from-alb" {
   } ]
 }
 
+# Create a security group that allow SSH traffic from port 22 
+# (this will be attached to the instances)
 resource "aws_security_group" "allow-ssh-traffic" {
   name = "allow-ssh-traffic-from-alb"
   ingress = [ {

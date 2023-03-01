@@ -1,5 +1,13 @@
+resource "aws_lb" "application-load-balancer" {
+  name = "application-load-balancer"
+  load_balancer_type = "application"
+  security_groups = [ aws_security_group.allow-all-http-traffic.id ]
+  subnets = ["subnet-01626029388b5b8bf", "subnet-0a30c3846db1024d8", "subnet-0f95335da54aaaa90"]
+  internal = false
+}
+
 resource "aws_instance" "ec2-instances" {
-  count = 2
+  count = 3
   availability_zone = data.aws_availability_zones.available.names[count.index]
   ami = "ami-065793e81b1869261" # Defined specific ami id from aws management console
   instance_type = "t2.micro"
@@ -20,6 +28,31 @@ resource "aws_instance" "ec2-instances" {
   systemctl enable httpd
   echo "<h1>Hello World from $(hostname -f)</h1>" > /var/www/html/index.html
   EOF
+}
+
+resource "aws_lb_target_group" "application-load-balancer-tg" {
+  name = "application-load-balancer-tg"
+  port = 80
+  protocol = "HTTP"
+  vpc_id = "vpc-0c9fbc589930e89e4"
+}
+
+resource "aws_lb_target_group_attachment" "alb-tg-attachment" {
+  count = 3
+  target_group_arn = aws_lb_target_group.application-load-balancer-tg.arn
+  target_id = aws_instance.ec2-instances.*.id[count.index]
+  port = 80
+}
+
+resource "aws_lb_listener" "learn-tf-lb-listener" {
+  load_balancer_arn = aws_lb.application-load-balancer.arn
+  port = 80
+  protocol = "HTTP"
+  
+  default_action {
+      type = "forward"
+      target_group_arn = aws_lb_target_group.application-load-balancer-tg.arn
+  }
 }
 
 resource "aws_security_group" "allow-all-http-traffic" {

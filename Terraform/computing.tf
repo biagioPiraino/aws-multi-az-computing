@@ -10,14 +10,40 @@ data "aws_ami" "amazon-linux" {
 
 resource "aws_instance" "ec2-instances" {
   count = 2
-  availability_zone = data.aws_availability_zones.available[count.index]
+  availability_zone = data.aws_availability_zones.available.names[count.index]
   ami = data.aws_ami.amazon-linux.id
   instance_type = "t2.micro"
-  security_groups = []
-  user_data = file("ec2-user-data.sh")
+  security_groups = [aws_security_group.allow-all-tcp-traffic.name]
   associate_public_ip_address = true
+  user_data = file("ec2-user-data.sh") # Need to understand how we pass user_data correctly on the instances
 }
 
+resource "aws_security_group" "allow-all-tcp-traffic" {
+  name = "allow-all-tcp-traffic"
+  ingress = [ {
+    cidr_blocks = [ "0.0.0.0/0" ]
+    description = "Allow all TCP traffic at port 80"
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    ipv6_cidr_blocks = []
+    prefix_list_ids = []
+    security_groups = []
+    self = false
+  } ]
+
+  egress = [ {
+    cidr_blocks = [ "0.0.0.0/0" ]
+    description = "Allow all outbound traffic"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    ipv6_cidr_blocks = []
+    prefix_list_ids = []
+    security_groups = []
+    self = false
+  } ]
+}
 
 
 

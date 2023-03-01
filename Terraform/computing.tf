@@ -1,21 +1,21 @@
-data "aws_ami" "amazon-linux" {
-    most_recent = true
-    owners = ["amazon"]
-    # Filter values picked from Terraform documentation
-    filter {
-      name = "name"
-      values = ["amzn-ami-hvm-*-x86_64-ebs"] 
-    }
-}
-
 resource "aws_instance" "ec2-instances" {
   count = 2
   availability_zone = data.aws_availability_zones.available.names[count.index]
-  ami = data.aws_ami.amazon-linux.id
+  ami = "ami-065793e81b1869261" # Defined specific ami id from aws management console
   instance_type = "t2.micro"
-  security_groups = [aws_security_group.allow-all-tcp-traffic.name]
+  security_groups = [ aws_security_group.allow-all-tcp-traffic.name ]
+  vpc_security_group_ids = [ aws_security_group.allow-all-tcp-traffic.id ]
   associate_public_ip_address = true
-  user_data = file("ec2-user-data.sh") # Need to understand how we pass user_data correctly on the instances
+  user_data = <<EOF
+  #!/bin/bash
+  # Use this for your user data (script from top to bottom)
+  # install httpd (Linux 2 version)
+  yum update -y
+  yum install -y httpd
+  systemctl start httpd
+  systemctl enable httpd
+  echo "<h1>Hello World from $(hostname -f)</h1>" > /var/www/html/index.html
+  EOF
 }
 
 resource "aws_security_group" "allow-all-tcp-traffic" {

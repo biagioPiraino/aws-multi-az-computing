@@ -7,10 +7,10 @@ resource "aws_lb" "application-load-balancer" {
   internal = false
 }
 
-# Create three EC2 Instances that will operate in the VPC private subnets
+# Create two EC2 Instances that will operate in the VPC private subnets
 # To test the responsivness of the server, a dummy user data has been provisioned
 resource "aws_instance" "ec2-instances" {
-  count = 3
+  count = 2
   availability_zone = data.aws_availability_zones.available.names[count.index]
   ami = "ami-065793e81b1869261" # Defined specific ami id from aws management console
   instance_type = "t2.micro"
@@ -39,9 +39,9 @@ resource "aws_lb_target_group" "application-load-balancer-tg" {
   vpc_id = module.vpc.vpc_id
 }
 
-# Register all the three instances to the target group 
+# Register all the two EC2 instances to the target group 
 resource "aws_lb_target_group_attachment" "alb-tg-attachment" {
-  count = 3
+  count = 2
   target_group_arn = aws_lb_target_group.application-load-balancer-tg.arn
   target_id = aws_instance.ec2-instances.*.id[count.index]
   port = 80

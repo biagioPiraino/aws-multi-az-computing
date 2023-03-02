@@ -11,4 +11,4 @@ Deploy secure, distributed and multi-AZ computing power on AWS using Terraform :
 - Appropriate Security Groups to enforce a strict communication between the ALB and the EC2 instances
 
 ## Activities
- ✅ Functionality tested
+ :heavy_check_mark::heavy_check_mark: Functionality tested

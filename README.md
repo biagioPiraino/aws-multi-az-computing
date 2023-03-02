@@ -7,4 +7,4 @@ The script includes the creation of the following resources:
 - An Application Load Balancer that operates in the VPC's public subnets
 - A fleet of two EC2 instances that operates in the VPC's private subnets
 - NAT Gateways deployed in the public subnets to allow EC2 instances to communicate with the 'outside world'
-- Appropriate Security Groups to enforce a strict communication between the ALB and ASG's instances
+- Appropriate Security Groups to enforce a strict communication between the ALB and the EC2 instances

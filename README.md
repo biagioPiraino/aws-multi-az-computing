@@ -10,5 +10,8 @@ Deploy secure, distributed and multi-AZ computing power on AWS using Terraform :
 - NAT Gateways deployed in the public subnets to allow EC2 instances to communicate with the 'outside world'
 - Appropriate Security Groups to enforce a strict communication between the ALB and the EC2 instances
 
+## Diagram
+<img src="./aws-multi-az-computing.png?raw=true" width="300">
+
 ## Activities
  :heavy_check_mark::heavy_check_mark: Functionality tested

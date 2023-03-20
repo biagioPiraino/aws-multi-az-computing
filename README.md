@@ -1,6 +1,6 @@
 # AWS Multi-AZ Computing
 <h3>Description</h3>
-<p>Deploy secure, distributed and multi-AZ computing power on AWS using using <strong>Terraform</strong>.<p>
+<p>Deploy secure, distributed and multi-AZ computing power on AWS using <strong>Terraform</strong>.<p>
 <hr>
 
 <h3>Architecture</h3>
